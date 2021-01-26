@@ -58,28 +58,28 @@ jobs:
       -
         name: install-arm-tools
         run: |
-          apt install gdisk zip systemd-container bmap-tools
+          sudo apt install gdisk zip systemd-container bmap-tools
           
           pkgver=23
-          wget https://git.archlinux.org/arch-install-scripts.git/snapshot/arch-install-scripts-$pkgver.tar.gz
-          tar -xvf arch-install-scripts-$pkgver.tar.gz
-          make -C arch-install-scripts-$pkgver
-          make -C arch-install-scripts-$pkgver check
+          sudo wget https://git.archlinux.org/arch-install-scripts.git/snapshot/arch-install-scripts-$pkgver.tar.gz
+          sudo tar -xvf arch-install-scripts-$pkgver.tar.gz
+          sudo make -C arch-install-scripts-$pkgver
+          sudo make -C arch-install-scripts-$pkgver check
           sudo make -C arch-install-scripts-$pkgver PREFIX=/usr install
 
-          git clone https://gitlab.manjaro.org/manjaro-arm/applications/manjaro-arm-tools.git
+          sudo git clone https://gitlab.manjaro.org/manjaro-arm/applications/manjaro-arm-tools.git
 
           install_m_a_tools() {
               pkgname=manjaro-arm-tools
-              install -dm777 /usr/share/$pkgname/lib
-              install -dm777 /usr/share/$pkgname/profiles
-              install -d /usr/bin
-              install -d /etc/$pkgname/
-              install -dm777 /var/lib/$pkgname/{pkg,img,tmp,profiles}
-              install -dm777 /var/cache/$pkgname/{pkg/pkg-cache,img}
-              install -Dm755 lib/* /usr/share/$pkgname/lib/
-              install -Dm755 bin/* /usr/bin/
-              install -Dm755 lib/manjaro-arm-tools.conf /etc/manjaro-arm-tools/
+              sudo install -dm777 /usr/share/$pkgname/lib
+              sudo install -dm777 /usr/share/$pkgname/profiles
+              sudo install -d /usr/bin
+              sudo install -d /etc/$pkgname/
+              sudo install -dm777 /var/lib/$pkgname/{pkg,img,tmp,profiles}
+              sudo install -dm777 /var/cache/$pkgname/{pkg/pkg-cache,img}
+              sudo install -Dm755 lib/* /usr/share/$pkgname/lib/
+              sudo install -Dm755 bin/* /usr/bin/
+              sudo install -Dm755 lib/manjaro-arm-tools.conf /etc/manjaro-arm-tools/
           }
           install_m_a_tools        
       -
@@ -89,9 +89,7 @@ jobs:
           BRANCH: ${{ matrix.BRANCH }}
           VERSION: ${{ steps.time.outputs.time }}
         run: |
-          mkdir -p manjaro-arm-tools pkg-cache img
-
-          buildarmimg -d pinephone -e $EDITION -v $VERSION -b $BRANCH
+          sudo buildarmimg -d pinephone -e $EDITION -v $VERSION -b $BRANCH
           
           FILE_PATH=$(find /var/cache/manjaro-arm-tools/img -type f -name "*.img" -exec stat -c '%Y %n' {} \; | sort -nr | awk 'NR==1 {print $2}')
           cp $FILE_PATH .
