@@ -49,7 +49,7 @@ jobs:
         with:
           repository: manjaro-pinephone/arm-profiles
           token: "${{ secrets.GITHUB_TOKEN }}"
-          path: 'iso-profiles'
+          path: 'arm-profiles'
       - 
         id: time
         uses: nanzm/get-time-action@v1.1
