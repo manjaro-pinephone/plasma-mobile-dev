@@ -59,7 +59,29 @@ jobs:
         name: install-arm-tools
         run: |
           sudo apt-get update
-          sudo apt install gdisk zip systemd-container bmap-tools asciidoc libarchive-tools
+          sudo apt install gdisk zip systemd-container bmap-tools asciidoc libarchive-tools git build-essential cmake libarchive-dev pkg-config libcurl4-openssl-dev libgpgme-dev libssl-dev fakeroot dh-autoreconf
+          
+          sudo git clone https://gitlab.manjaro.org/packages/core/pacman.git
+          cd pacman
+          sudo wget https://sources.archlinux.org/other/pacman/pacman-5.2.2.tar.gz
+          sudo tar -xvf pacman-5.2.2.tar.gz
+          cd pacman-5.2.2
+          sudo patch -p1 -i ../pacman-sync-first-option.patch
+          cd ../pacman-5.2.2
+          sudo ./configure --prefix=/usr --sysconfdir=/etc \
+            --localstatedir=/var --enable-doc \
+            --with-scriptlet-shell=/usr/bin/bash \
+            --with-ldconfig=/usr/bin/ldconfig
+          sudo make V=1
+          sudo make install
+          sudo install -m644 pacman.conf.x86_64 /etc/pacman.conf
+          sudo install -m644 makepkg.conf /etc/
+          sudo sed -i /etc/makepkg.conf \
+            -e "s|@CARCH[@]|x86_64|g" \
+            -e "s|@CHOST[@]|x86_64-pc-linux-gnu|g" \
+            -e "s|@CARCHFLAGS[@]|-march=x86-64|g"
+          sudo install -m644 etc-pacman.d-gnupg.mount /usr/lib/systemd/system/etc-pacman.d-gnupg.mount
+          sudo install -m644 pacman-init.service /usr/lib/systemd/system/pacman-init.service
           
           pkgver=23
           sudo wget https://git.archlinux.org/arch-install-scripts.git/snapshot/arch-install-scripts-$pkgver.tar.gz
