@@ -82,6 +82,7 @@ jobs:
             -e "s|@CARCHFLAGS[@]|-march=x86-64|g"
           sudo install -m644 etc-pacman.d-gnupg.mount /usr/lib/systemd/system/etc-pacman.d-gnupg.mount
           sudo install -m644 pacman-init.service /usr/lib/systemd/system/pacman-init.service
+          cd ..
           
           pkgver=23
           sudo wget https://git.archlinux.org/arch-install-scripts.git/snapshot/arch-install-scripts-$pkgver.tar.gz
@@ -103,7 +104,10 @@ jobs:
               sudo install -Dm755 $pkgname/bin/* /usr/bin/
               sudo install -Dm755 $pkgname/lib/manjaro-arm-tools.conf /etc/manjaro-arm-tools/
           }
-          install_m_a_tools        
+          install_m_a_tools
+          
+          sudo sed -i -e 's|1>/dev/null||g' /usr/share/manjaro-arm-tools/lib/functions.sh   
+          sudo sed -i -e 's|1> /dev/null 2>&1||g' /usr/share/manjaro-arm-tools/lib/functions.sh 
       -
         name: build
         env:
