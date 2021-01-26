@@ -65,7 +65,7 @@ jobs:
 
           [ "$SCOPE" == "minimal" ] && unset SCOPE
 
-          docker run -v --rm --privileged \
+          docker run -D -v --rm --privileged \
           -e EDITION=$EDITION \
           -e BRANCH=$BRANCH \
           -e DEVICE=pinephone \
