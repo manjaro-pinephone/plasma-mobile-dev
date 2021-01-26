@@ -44,13 +44,6 @@ jobs:
         with:
           access_token: ${{ github.token }}
       - 
-        name: checkout
-        uses: actions/checkout@v2
-        with:
-          repository: manjaro-pinephone/arm-profiles
-          token: "${{ secrets.GITHUB_TOKEN }}"
-          path: 'arm-profiles'
-      - 
         id: time
         uses: nanzm/get-time-action@v1.1
         with:
@@ -107,7 +100,14 @@ jobs:
           install_m_a_tools
           
           sudo sed -i -e 's|1>/dev/null||g' /usr/share/manjaro-arm-tools/lib/functions.sh   
-          sudo sed -i -e 's|1> /dev/null 2>&1||g' /usr/share/manjaro-arm-tools/lib/functions.sh 
+          sudo sed -i -e 's|1> /dev/null 2>&1||g' /usr/share/manjaro-arm-tools/lib/functions.sh
+      - 
+        name: checkout
+        uses: actions/checkout@v2
+        with:
+          repository: manjaro-pinephone/arm-profiles
+          token: "${{ secrets.GITHUB_TOKEN }}"
+          path: '/usr/share/manjaro-arm-tools/profiles/arm-profiles'          
       -
         name: build
         env:
