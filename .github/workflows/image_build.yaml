@@ -1,0 +1,100 @@
+name: image_build
+on:
+  workflow_dispatch:
+  repository_dispatch:
+    types: [image_profile_update]
+
+jobs:
+  prepare_release:
+    runs-on: ubuntu-latest
+    steps:
+      - 
+        uses: styfle/cancel-workflow-action@0.7.0
+        with:
+          access_token: ${{ github.token }}
+      - 
+        id: time
+        uses: nanzm/get-time-action@v1.1
+        with:
+          format: 'YYYYMMDDHHmm'
+      - 
+        id: release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.time.outputs.time }}
+          release_name: Release ${{ steps.time.outputs.time }}
+          draft: false
+          prerelease: false
+    outputs:
+      upload_url: ${{ steps.release.outputs.upload_url }}
+      release_id: ${{ steps.release.outputs.id }}
+
+  release:
+    runs-on: ubuntu-latest
+    needs: prepare_release
+    strategy:
+      matrix:
+        EDITION: [plasma-mobile-dev]
+        BRANCH: [unstable]
+    steps:
+      - 
+        uses: styfle/cancel-workflow-action@0.7.0
+        with:
+          access_token: ${{ github.token }}
+      - 
+        name: checkout
+        uses: actions/checkout@v2
+        with:
+          repository: manjaro-pinephone/arm-profiles
+          token: "${{ secrets.GITHUB_TOKEN }}"
+          path: 'iso-profiles'
+      - 
+        id: time
+        uses: nanzm/get-time-action@v1.1
+        with:
+          format: 'YYYYMMDD'          
+      -
+        name: build
+        env:
+          EDITION: ${{ matrix.EDITION }}
+          BRANCH: ${{ matrix.BRANCH }}
+        run: |
+          mkdir -p manjaro-arm-tools pkg-cache img
+
+          [ "$SCOPE" == "minimal" ] && unset SCOPE
+
+          docker run -v --rm --privileged \
+          -e EDITION=$EDITION \
+          -e BRANCH=$BRANCH \
+          -e DEVICE=pinephone \
+          -e VERSION=${{ steps.time.outputs.time }} \
+          -v $PWD/pkg-cache:/var/cache/pacman/pkg/ \
+          -v $PWD/arm-profiles:/usr/share/manjaro-arm-tools/profiles/arm-profiles/ \
+          -v $PWD/manjaro-arm-tools:/var/lib/manjaro-arm-tools/ \
+          -v $PWD/img:/var/cache/manjaro-arm-tools/img/ \
+          -t manjarosway/manjaro-arm-tools
+          
+          FILE_PATH=$(find ./img -type f -name "*.img" -exec stat -c '%Y %n' {} \; | sort -nr | awk 'NR==1 {print $2}')
+          cp $FILE_PATH .
+
+          echo "FILE_PATH=$(basename $FILE_PATH)" >> $GITHUB_ENV
+      - 
+        id: upload_release 
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.prepare_release.outputs.upload_url }}
+          asset_path: ./${{ env.FILE_PATH }}
+          asset_name: ${{ env.FILE_PATH }}
+          asset_content_type: application/x-iso-image
+      - 
+        name: rollback_release
+        if: failure()
+        uses: author/action-rollback@stable
+        with:
+          release_id: ${{ needs.prepare_release.outputs.release_id }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
