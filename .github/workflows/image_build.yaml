@@ -59,7 +59,7 @@ jobs:
         name: install-arm-tools
         run: |
           sudo apt-get update
-          sudo apt install gdisk zip systemd-container bmap-tools asciidoc bsdtar
+          sudo apt install gdisk zip systemd-container bmap-tools asciidoc libarchive-tools
           
           pkgver=23
           sudo wget https://git.archlinux.org/arch-install-scripts.git/snapshot/arch-install-scripts-$pkgver.tar.gz
