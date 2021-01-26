@@ -65,7 +65,7 @@ jobs:
 
           [ "$SCOPE" == "minimal" ] && unset SCOPE
 
-          docker -D run -v --rm --privileged \
+          docker run -v --rm --privileged \
           -e EDITION=$EDITION \
           -e BRANCH=$BRANCH \
           -e DEVICE=pinephone \
@@ -74,6 +74,7 @@ jobs:
           -v $PWD/arm-profiles:/usr/share/manjaro-arm-tools/profiles/arm-profiles/ \
           -v $PWD/manjaro-arm-tools:/var/lib/manjaro-arm-tools/ \
           -v $PWD/img:/var/cache/manjaro-arm-tools/img/ \
+          -v /sys/fs/cgroup/systemd/actions_job:/sys/fs/cgroup/systemd/actions_job \
           -t manjarosway/manjaro-arm-tools
           
           FILE_PATH=$(find ./img -type f -name "*.img" -exec stat -c '%Y %n' {} \; | sort -nr | awk 'NR==1 {print $2}')
