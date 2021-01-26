@@ -59,7 +59,6 @@ jobs:
         name: install-arm-tools
         run: |
           sudo apt-get update
-          sudo apt-get upgrade
           sudo apt install gdisk zip systemd-container bmap-tools
           
           pkgver=23
