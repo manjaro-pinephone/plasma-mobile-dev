@@ -1,4 +1,4 @@
-# manjaro sway edition
+# Manjaro Plasma-Mobile Developer Edition
 [![iso_build](https://github.com/manjaro-pinephone/plasma-mobile-dev/workflows/iso_build/badge.svg?event=repository_dispatch)](https://github.com/manjaro-pinephone/plasma-mobile-dev/actions)
 
 ## description
