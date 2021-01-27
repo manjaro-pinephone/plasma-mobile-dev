@@ -21,6 +21,6 @@ Images are build and uploaded in a relatively regular interval to [github releas
 ## credentials
 
 ```
-user: manjaro
+user: kde
 password: 123456
 ```
