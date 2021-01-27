@@ -75,6 +75,7 @@ jobs:
             -e "s|@CARCHFLAGS[@]|-march=x86-64|g"
           sudo install -m644 etc-pacman.d-gnupg.mount /usr/lib/systemd/system/etc-pacman.d-gnupg.mount
           sudo install -m644 pacman-init.service /usr/lib/systemd/system/pacman-init.service
+          sudo mkdir -p /etc/pacman.d
           sudo touch /etc/pacman.d/mirrorlist
           cd ..
           
