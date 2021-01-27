@@ -104,6 +104,7 @@ jobs:
           
           sudo sed -i -e 's|1>/dev/null||g' /usr/share/manjaro-arm-tools/lib/functions.sh   
           sudo sed -i -e 's|1> /dev/null 2>&1||g' /usr/share/manjaro-arm-tools/lib/functions.sh
+          sudo sed -i -e 's|2>/dev/null||g' /usr/share/manjaro-arm-tools/lib/functions.sh 
       - 
         name: checkout
         uses: actions/checkout@v2
@@ -133,8 +134,12 @@ jobs:
           
           FILE_PKG=$(find /var/cache/manjaro-arm-tools/img -type f -name "*-pkgs.txt" -exec stat -c '%Y %n' {} \; | sort -nr | awk 'NR==1 {print $2}')
           cp -v $FILE_PKG .
+          
+          cat $(basename $FILE_PKG)
+          
+          zip $(basename $FILE_PKG).zip $(basename $FILE_PKG)
 
-          echo "FILE_PKG=$(basename $FILE_PKG)" >> $GITHUB_ENV
+          echo "FILE_PKG=$(basename $FILE_PKG).zip" >> $GITHUB_ENV
       - 
         id: upload_release 
         uses: actions/upload-release-asset@v1
@@ -154,7 +159,17 @@ jobs:
           upload_url: ${{ needs.prepare_release.outputs.upload_url }}
           asset_path: ./${{ env.FILE_SHA256 }}
           asset_name: ${{ env.FILE_SHA256 }}
-          asset_content_type: text/plain                
+          asset_content_type: text/plain
+      - 
+        id: upload_pkg
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.prepare_release.outputs.upload_url }}
+          asset_path: ./${{ env.FILE_PKG }}
+          asset_name: ${{ env.FILE_PKG }}
+          asset_content_type: application/zip
       - 
         name: rollback_release
         if: failure()
