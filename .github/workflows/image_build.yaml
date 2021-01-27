@@ -154,17 +154,7 @@ jobs:
           upload_url: ${{ needs.prepare_release.outputs.upload_url }}
           asset_path: ./${{ env.FILE_SHA256 }}
           asset_name: ${{ env.FILE_SHA256 }}
-          asset_content_type: text/plain
-      - 
-        id: upload_pkg
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ needs.prepare_release.outputs.upload_url }}
-          asset_path: ./${{ env.FILE_PKG }}
-          asset_name: ${{ env.FILE_PKG }}
-          asset_content_type: text/plain                    
+          asset_content_type: text/plain                
       - 
         name: rollback_release
         if: failure()
