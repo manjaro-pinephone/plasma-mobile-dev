@@ -75,6 +75,7 @@ jobs:
             -e "s|@CARCHFLAGS[@]|-march=x86-64|g"
           sudo install -m644 etc-pacman.d-gnupg.mount /usr/lib/systemd/system/etc-pacman.d-gnupg.mount
           sudo install -m644 pacman-init.service /usr/lib/systemd/system/pacman-init.service
+          sudo touch /etc/pacman.d/mirrorlist
           cd ..
           
           sudo wget https://gitlab.manjaro.org/packages/community/manjaro-arm-qemu-static/-/raw/master/qemu-static.conf -O /usr/lib/binfmt.d/qemu-static.conf
@@ -134,12 +135,8 @@ jobs:
           
           FILE_PKG=$(find /var/cache/manjaro-arm-tools/img -type f -name "*-pkgs.txt" -exec stat -c '%Y %n' {} \; | sort -nr | awk 'NR==1 {print $2}')
           cp -v $FILE_PKG .
-          
-          cat $(basename $FILE_PKG)
-          
-          zip $(basename $FILE_PKG).zip $(basename $FILE_PKG)
 
-          echo "FILE_PKG=$(basename $FILE_PKG).zip" >> $GITHUB_ENV
+          echo "FILE_PKG=$(basename $FILE_PKG)" >> $GITHUB_ENV
       - 
         id: upload_release 
         uses: actions/upload-release-asset@v1
@@ -169,7 +166,7 @@ jobs:
           upload_url: ${{ needs.prepare_release.outputs.upload_url }}
           asset_path: ./${{ env.FILE_PKG }}
           asset_name: ${{ env.FILE_PKG }}
-          asset_content_type: application/zip
+          asset_content_type: text/plain
       - 
         name: rollback_release
         if: failure()
