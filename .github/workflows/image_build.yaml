@@ -36,7 +36,7 @@ jobs:
     needs: prepare_release
     strategy:
       matrix:
-        EDITION: [plasma-mobile-dev]
+        EDITION: [plasma-mobile]
         BRANCH: [unstable]
     steps:
       - 
@@ -119,7 +119,7 @@ jobs:
         env:
           EDITION: ${{ matrix.EDITION }}
           BRANCH: ${{ matrix.BRANCH }}
-          VERSION: ${{ steps.time.outputs.time }}
+          VERSION: dev-${{ steps.time.outputs.time }}
         run: |
           sudo mv -v /home/runner/work/plasma-mobile-dev/plasma-mobile-dev/arm-profiles /usr/share/manjaro-arm-tools/profiles
           sudo buildarmimg -d pinephone -e $EDITION -v $VERSION -b $BRANCH -s plasma-mobile -k kde-unstable
