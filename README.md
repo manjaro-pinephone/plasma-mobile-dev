@@ -16,11 +16,4 @@ Images are build and uploaded in a relatively regular interval to [github releas
 ## building
 
 1. check out the arm-profiles
-2. `sudo buildarmimg -d pinephone -e plasma-mobile-dev -v 20210226 -b unstable`
-
-## credentials
-
-```
-user: kde
-password: 123456
-```
+2. `sudo buildarmimg -d pinephone -e plasma-mobile -v 20211003 -b unstable -k kde-unstable`
