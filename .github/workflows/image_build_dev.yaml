@@ -24,7 +24,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ steps.time.outputs.time }}
-          release_name: ModemManager-Dev ${{ steps.time.outputs.time }}
+          release_name: Developer Release ${{ steps.time.outputs.time }}
           draft: false
           prerelease: false
     outputs:
