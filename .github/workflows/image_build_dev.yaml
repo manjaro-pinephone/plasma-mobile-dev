@@ -36,7 +36,7 @@ jobs:
     needs: prepare_release
     strategy:
       matrix:
-        DEVICE: [pinephone]
+        DEVICE: [pinephone, pinephonepro]
         EDITION: [plasma-mobile-dev]
         BRANCH: [unstable]
     steps:
